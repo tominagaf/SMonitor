@@ -5,15 +5,15 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-# SQLite precisa de algumas bibliotecas nativas as vezes, mas o Prisma costuma lidar bem.
-RUN npm ci
+# SQLite e Prisma funcionam melhor com npm install em builds de contêiner para garantir sincronia
+RUN npm install
 
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Client
+# Gerar o cliente Prisma com as bibliotecas nativas corretas para o ambiente do contêiner
 RUN npx prisma generate
 
 RUN npm run build
