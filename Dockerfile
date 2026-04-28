@@ -5,6 +5,9 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+# Copiar o diretório prisma para que o script postinstall (prisma generate) funcione
+COPY prisma ./prisma/
+
 # SQLite e Prisma funcionam melhor com npm install em builds de contêiner para garantir sincronia
 RUN npm install
 
