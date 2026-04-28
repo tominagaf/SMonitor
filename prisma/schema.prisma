@@ -1,0 +1,76 @@
+// Prisma schema para SQLite (Banco Embutido)
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  plan      String   @default("basic")
+  users     User[]
+  stores    Store[]
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      String   @default("USER")
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Store {
+  id           String   @id @default(cuid())
+  name         String
+  bossEndpoint String
+  bossUser     String
+  bossPass     String
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+  devices      Device[]
+  createdAt    DateTime @default(now())
+}
+
+model Device {
+  id          String      @id @default(cuid())
+  name        String
+  model       String
+  addr        String      
+  category    String
+  storeId     String
+  store       Store       @relation(fields: [storeId], references: [id])
+  telemetries Telemetry[]
+  alarms      Alarm[]
+  createdAt   DateTime    @default(now())
+}
+
+model Telemetry {
+  id           String   @id @default(cuid())
+  deviceId     String
+  device       Device   @relation(fields: [deviceId], references: [id])
+  variableCode String
+  value        Float
+  timestamp    DateTime @default(now())
+
+  @@index([deviceId, timestamp])
+}
+
+model Alarm {
+  id          String   @id @default(cuid())
+  deviceId    String
+  device      Device   @relation(fields: [deviceId], references: [id])
+  name        String
+  description String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Supermarket IIoT Monitor",
+  "description": "Plataforma SaaS para monitoramento industrial de redes de supermercado, integração CAREL Boss, eficiência energética e predição de falhas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["SaaS", "IIoT", "Real-time Dashboards", "AI Analytics"]
+}
